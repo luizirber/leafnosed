@@ -1,10 +1,10 @@
 # California leaf-nosed bat (*Macrotus californicus*) genome assembly
 
-# Installation
+# Getting started
 
 ## Dependencies
 
- - FastQC (0.10.12 or greater)
+ - FastQC (0.11.2 or greater)
  - Snakemake (depends on Python 3)
  - Make
 
@@ -27,6 +27,8 @@ For subsequent runs and other steps you can invoke Snakemake directly:
 ```bash
 $ snakemake <rule name or target file>
 ```
+
+# Analysis steps
 
 ## Raw reads quality control
 
