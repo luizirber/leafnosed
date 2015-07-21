@@ -1,0 +1,8 @@
+module load git-annex
+
+module unload Python
+module load anaconda
+source activate bat
+
+module load FastQC/0.11.2
+module load SGA/0.10.13
