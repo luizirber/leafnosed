@@ -13,12 +13,37 @@ rule download_raw_data:
 	    "wget -nH -m -P inputs/ --cut-dirs=2 ftp://crocgenomes.org/pub/phyllostomid_genomes/"
 
 # http://support.illumina.com/help/SequencingAnalysisWorkflow/Content/Vault/Informatics/Sequencing_Analysis/CASAVA/swSEQ_mCA_FASTQFiles.htm
-# <sample name>_<barcode sequence>_L<lane (0-padded to 3 digits)>_R<read number>_<set number (0-padded to 3 digits>.fastq.gz 
- 
+# <sample name>_<barcode sequence>_L<lane (0-padded to 3 digits)>_R<read number>_<set number (0-padded to 3 digits>.fastq.gz
+
 rule fastqc_illumina:
     input: 'inputs/HiSeq/Run_1305/Project_hanson/Sample_{name}/{name}_{barcode}_L{lane,\d+}_R{read_number}_001.fastq.gz'
     output: 'outputs/fastqc_illumina/Sample_{name}/{name}_{barcode}_L{lane,\d+}_R{read_number}_fastqc.html'
     shell: 'fastqc --casava -o $(dirname {output}) {input}'
+
+
+rule pacbio_filtering:
+    input:
+        params='inputs/pacbio_filtering/{species}/params.xml',
+        inputs='outputs/pacbio_filtering/{species}/input.xml'
+#    output: ''
+    shell:
+        'smrtpipe -D NPROC=3 -D CLUSTER=BASH -D MAX_THREADS=4 '
+        '--params={WORKDIR}/{input.params} xml:{WORKDIR}/{input.inputs} '
+        '--output {WORKDIR}/outputs/pacbio_filtering/'
+
+rule pacbio_filtering_convert_input:
+    input: 'outputs/pacbio_filtering/{species}/input.fofn'
+    output: 'outputs/pacbio_filtering/{species}/input.xml'
+    shell:
+        'fofnToSmrtpipeInput.py {input} > {output}'
+
+rule pacbio_filtering_fofn:
+    input: 'inputs/' + f for f in PACBIO_RAW['{species}'] if f.endswith(".bax.h5")
+    output: 'outputs/pacbio_filtering/{species}/input.fofn'
+    run:
+        with open(output[0], 'w') as fofn:
+            fofn.write("\n".join(os.path.join(WORKDIR, f) for f in input))
+            fofn.write("\n")
 
 
 #rule fastqc_pacbio:
