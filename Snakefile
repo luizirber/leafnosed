@@ -38,13 +38,20 @@ rule pacbio_filtering_convert_input:
         'fofnToSmrtpipeInput.py {input} > {output}'
 
 rule pacbio_filtering_fofn:
-    input: 'inputs/' + f for f in PACBIO_RAW['{species}'] if f.endswith(".bax.h5")
+    input:
+         lambda w: ['inputs/' + f for f in PACBIO_RAW[w.species]
+                                if f.endswith(".bax.h5")]
     output: 'outputs/pacbio_filtering/{species}/input.fofn'
     run:
         with open(output[0], 'w') as fofn:
             fofn.write("\n".join(os.path.join(WORKDIR, f) for f in input))
             fofn.write("\n")
 
+
+rule fastqc_pacbio:
+    input: 'outputs/pacbio_filtered/{species}_filtered_subreads.fastq.gz'
+    output: 'outputs/fastqc_pacbio/{species}_filtered_subreads_fastqc.html'
+    shell: 'fastqc -o $(dirname {output}) {input}'
 
 #rule fastqc_pacbio:
 #    input: 'inputs/PacBio/{sample_number}/_A01_1_Cell1_PacBioRun167_JHanson560_TK163824/Analysis_Results/m150428_212227_42131_c100799742550000001823174309091570_s1_p0.1.subreads.fastq'
@@ -61,7 +68,8 @@ rule publish_fastqc:
         "outputs/fastqc_illumina/Sample_46395/46395_CTTGTA_L001_R2_fastqc.html",
         "outputs/fastqc_illumina/Sample_46395/46395_CTTGTA_L002_R1_fastqc.html",
         "outputs/fastqc_illumina/Sample_46395/46395_CTTGTA_L002_R2_fastqc.html",
+        "outputs/fastqc_pacbio/macCal_filtered_subreads_fastqc.html"
     shell: """
         ssh {REMOTE_HOST} "mkdir -p {REMOTE_PATH}/bat"
-        scp {input} {REMOTE_HOST}:{REMOTE_PATH}/bat"
+        scp {input} {REMOTE_HOST}:{REMOTE_PATH}/bat
     """
