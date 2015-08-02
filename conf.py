@@ -1,4 +1,4 @@
-WORKDIR = "/mnt/research/ged/irberlui/biodata/bat"
+WORKDIR = "/bat_data/leafnosed"
 
 with open(WORKDIR + "/files", 'r') as f:
     RAW_DATA = f.read().splitlines()

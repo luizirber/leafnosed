@@ -68,7 +68,8 @@ rule publish_fastqc:
         "outputs/fastqc_illumina/Sample_46395/46395_CTTGTA_L001_R2_fastqc.html",
         "outputs/fastqc_illumina/Sample_46395/46395_CTTGTA_L002_R1_fastqc.html",
         "outputs/fastqc_illumina/Sample_46395/46395_CTTGTA_L002_R2_fastqc.html",
-        "outputs/fastqc_pacbio/macCal_filtered_subreads_fastqc.html"
+        "outputs/fastqc_pacbio/macCal_filtered_subreads_fastqc.html",
+        "outputs/fastqc_pacbio/desRot_filtered_subreads_fastqc.html"
     shell: """
         ssh {REMOTE_HOST} "mkdir -p {REMOTE_PATH}/bat"
         scp {input} {REMOTE_HOST}:{REMOTE_PATH}/bat
