@@ -13,5 +13,12 @@ ILLUMINA_RAW = {
   'desRot': ['inputs/' + f for f in RAW_DATA if 'Sample_46395' in f]
 }
 
+SAMPLE_TO_SPECIES = {
+    '46394': 'macCal',
+    '46395': 'desRot',
+}
+
+SPECIES_TO_SAMPLE = {v:k for (k, v) in SAMPLE_TO_SPECIES.items()}
+
 REMOTE_HOST = "athyra"
 REMOTE_PATH = "public_html"

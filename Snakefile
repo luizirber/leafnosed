@@ -16,8 +16,9 @@ rule download_raw_data:
 # <sample name>_<barcode sequence>_L<lane (0-padded to 3 digits)>_R<read number>_<set number (0-padded to 3 digits>.fastq.gz
 
 rule fastqc_illumina:
-    input: 'inputs/HiSeq/Run_1305/Project_hanson/Sample_{name}/{name}_{barcode}_L{lane,\d+}_R{read_number}_001.fastq.gz'
-    output: 'outputs/fastqc_illumina/Sample_{name}/{name}_{barcode}_L{lane,\d+}_R{read_number}_fastqc.html'
+    input: 
+        lambda w: 'inputs/HiSeq/Run_1305/Project_hanson/Sample_' + SPECIES_TO_SAMPLE[w.species] + '/{name}_{barcode}_L{lane,\d+}_R{read_number}_001.fastq.gz'
+    output: 'outputs/fastqc_illumina/{species}/{name}_{barcode}_L{lane,\d+}_R{read_number}_fastqc.html'
     shell: 'fastqc --casava -o $(dirname {output}) {input}'
 
 
@@ -60,17 +61,16 @@ rule fastqc_pacbio:
 
 rule publish_fastqc:
     input:
-        "outputs/fastqc_illumina/Sample_46394/46394_GCCAAT_L001_R1_fastqc.html",
-        "outputs/fastqc_illumina/Sample_46394/46394_GCCAAT_L001_R2_fastqc.html",
-        "outputs/fastqc_illumina/Sample_46394/46394_GCCAAT_L002_R1_fastqc.html",
-        "outputs/fastqc_illumina/Sample_46394/46394_GCCAAT_L002_R2_fastqc.html",
-        "outputs/fastqc_illumina/Sample_46395/46395_CTTGTA_L001_R1_fastqc.html",
-        "outputs/fastqc_illumina/Sample_46395/46395_CTTGTA_L001_R2_fastqc.html",
-        "outputs/fastqc_illumina/Sample_46395/46395_CTTGTA_L002_R1_fastqc.html",
-        "outputs/fastqc_illumina/Sample_46395/46395_CTTGTA_L002_R2_fastqc.html",
+        "outputs/fastqc_illumina/macCal/46394_GCCAAT_L001_R1_fastqc.html",
+        "outputs/fastqc_illumina/macCal/46394_GCCAAT_L001_R2_fastqc.html",
+        "outputs/fastqc_illumina/macCal/46394_GCCAAT_L002_R1_fastqc.html",
+        "outputs/fastqc_illumina/macCal/46394_GCCAAT_L002_R2_fastqc.html",
+        "outputs/fastqc_illumina/desRot/46395_CTTGTA_L001_R1_fastqc.html",
+        "outputs/fastqc_illumina/desRot/46395_CTTGTA_L001_R2_fastqc.html",
+        "outputs/fastqc_illumina/desRot/46395_CTTGTA_L002_R1_fastqc.html",
+        "outputs/fastqc_illumina/desRot/46395_CTTGTA_L002_R2_fastqc.html",
         "outputs/fastqc_pacbio/macCal_filtered_subreads_fastqc.html",
         "outputs/fastqc_pacbio/desRot_filtered_subreads_fastqc.html"
-    shell: """
+    run:
         ssh {REMOTE_HOST} "mkdir -p {REMOTE_PATH}/bat"
         scp {input} {REMOTE_HOST}:{REMOTE_PATH}/bat
-    """
