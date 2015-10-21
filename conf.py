@@ -20,5 +20,12 @@ SAMPLE_TO_SPECIES = {
 
 SPECIES_TO_SAMPLE = {v:k for (k, v) in SAMPLE_TO_SPECIES.items()}
 
+SPECIES_TO_BARCODE = {
+    'macCal': "GCCAAT",
+    'desRot': "CTTGTA"
+}
+
+
+
 REMOTE_HOST = "athyra"
 REMOTE_PATH = "public_html"
