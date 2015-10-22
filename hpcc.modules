@@ -1,3 +1,4 @@
+module swap GNU GNU/4.8.3
 module load git-annex
 
 module unload Python
